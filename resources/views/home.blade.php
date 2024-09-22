@@ -19,7 +19,7 @@
                     <div class="nav">
                         <div class="nav-content">
                             <a href="/" style="font-size: 20px; color: black;">Url Shortener</a>
-                            <a href="https://github.com/RaqDeku/url-shortener-php-laravel">
+                            <a href="https://github.com/RaqDeku/url-shortener-php-laravel" target="_blank" rel="noopener noreferrer">
                                 <button class="button">
                                     Github
                                     <svg
@@ -42,7 +42,8 @@
                     </div>
                 </nav>
                 <div style="justify-content:center;" class="main">
-                    <form action="/" method="post" class="form">
+                    <form action="/" method="POST" class="form">
+                        @csrf
                         <div class="form-content">
                             <div class="form-group">
                                 <label for="longUrl">Your Long Url</label>
@@ -50,7 +51,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="shortUrl">Shorten Url</label>
-                                <input type="text" name="shortUrl" readonly>
+                                <input type="text" name="shortUrl" value="{{ $shortUrl }}" readonly>
                             </div>
                             <div>
                                 <button type="submit" class="button" style="width: 100%; margin-top: 2rem;">Shorten</button>
