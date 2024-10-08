@@ -42,6 +42,9 @@
                     </div>
                 </nav>
                 <div style="justify-content:center;" class="main">
+                    @if (session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     <form action="/" method="POST" class="form">
                         @csrf
                         <div class="form-content">

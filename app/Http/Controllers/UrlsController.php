@@ -3,37 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Url;
-use App\Helpers\Helpers;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\UrlService;
 
 class UrlsController extends Controller
 {
-    public function shorten()
+    private $urlService;
+
+    public function __construct(UrlService $urlService)
     {
-        $originalUrl = request("longUrl");
+        $this->urlService = $urlService;
+    }
 
-        $helperClass = new Helpers();
+    public function shorten(Request $request)
+    {
+        $originalUrl = $request->input('longUrl');
 
-        $shortUrl = $helperClass::generateString();
+        $shortUrl = $this->urlService->shortenUrl($request, $originalUrl);
 
-        $host = request()->getHost();
-        $port = request()->getPort();
-
-        $urlToSave = new Url();
-
-        $urlToSave->originalUrl = $originalUrl;
-        $urlToSave->shortUrl = $shortUrl;
-
-        $urlToSave->save();
-
-        return view("home", ['shortUrl' => "$host:$port/$shortUrl"]);
+        return view('home', $shortUrl);
     }
 
     public function redirect(string $shortUrl)
     {
-        $urlToRedirectTo = new Url();
-        $url = $urlToRedirectTo::where('shortUrl', $shortUrl)->get();
+        try {
+            $urlToRedirectTo = $this->urlService->getOriginalUrlAndRedirect($shortUrl);
+        } catch (ModelNotFoundException $exception) {
+            abort(404);
+            // return back()->withErrors($exception->getMessage())->withInput();
+        }
 
-        return redirect($url[0]["originalUrl"]);
+        return redirect($urlToRedirectTo);
     }
 }
